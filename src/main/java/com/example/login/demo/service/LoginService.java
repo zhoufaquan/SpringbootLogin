@@ -26,13 +26,13 @@ public class LoginService {
         return user2;
     }
 
-    public User insertUser(User user){
+    public int insertUser(User user){
         User user1 = new User();
         user1.setToken(user.getToken());
         user1.setTelephone(user.getTelephone());
         user1.setPassword(user.getPassword());
-        loginDao.insertUser(user1.getTelephone(),user1.getPassword(),user1.getToken());
-        return user;
+        int flag =loginDao.insertUser(user1.getTelephone(),user1.getPassword(),user1.getToken());
+        return flag;
     }
     public User findUser(String telephone){
         User user1 = loginDao.findUser(telephone);

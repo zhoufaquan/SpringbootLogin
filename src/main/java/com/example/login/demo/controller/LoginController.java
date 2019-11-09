@@ -32,12 +32,8 @@ public class LoginController {
     @GetMapping("/login")
     public String login(@Param("telephone") String telephone, @Param("password") String password, Model model,
                         HttpServletRequest request, HttpServletResponse response) {
-//        //index初始化数据
-//        int pageNum = 1;
-//        int size = 5;
-//        PageInfo<User> pp =  loginService.selectAll(pageNum,size);
-//        model.addAttribute("pageInfo", pp);
-        User user1 = loginService.findUser(telephone);
+
+         User user1 = loginService.findUser(telephone);
         if (user1 != null) {
            if (!user1.getPassword().equals(password)) {
                model.addAttribute("msg","密码错误");
@@ -53,7 +49,7 @@ public class LoginController {
             user.setTelephone(telephone);
             user.setPassword(password);
             user.setToken(token);
-            User msg = loginService.insertUser(user);
+            loginService.insertUser(user);
             int expire = 60 * 60 * 24 * 7;  //表示7天
             CookieUtil.setCookie(request, response, "Token", token, expire);
             HttpSession session = request.getSession();
@@ -101,7 +97,7 @@ public class LoginController {
                 return  null;
             }
         } catch (Exception e) {
-            System.out.println("pageInfo 为空");
+
             return null;
         }
     }

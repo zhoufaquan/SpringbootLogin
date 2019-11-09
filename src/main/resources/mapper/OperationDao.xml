@@ -6,7 +6,7 @@
     <insert id="addUser" parameterType="com.example.login.demo.entity.User" >
          insert into hellodao (telephone,password,token) values(#{telephone},#{password},#{token})
     </insert>
-    <update id="updateUser" >
+    <update id="updateUser" parameterType="com.example.login.demo.entity.User">
         update hellodao
         set
         <if test="telephone!=null">
@@ -22,7 +22,7 @@
     <delete id="deleteUserById" parameterType="int">
        delete from hellodao where id=#{id}
     </delete>
-    <select id="getUserById" resultType="com.example.login.demo.entity.User">
+    <select id="getUserById" parameterType="int" resultType="com.example.login.demo.entity.User">
         select * from hellodao where id = #{id}
     </select>
 </mapper>

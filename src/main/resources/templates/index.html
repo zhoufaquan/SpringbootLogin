@@ -13,13 +13,12 @@
 </head>
 <body>
 
-<li><a th:if="${session.telephone == null}" th:href="@{/login2}">登录</a></li>
-<div th:if="${session.telephone != null}">
+<h2><a th:if="${session.telephone == null}" th:href="@{/login2}">登录</a></h2>
+<h2 th:if="${session.telephone != null}">
     <a  th:text="${session.telephone}"> </a>
+</h2>
+<h2 th:if="${session.telephone != null}"><a href="/logout">退出登录</a></h2>
+<h2 th:if="${session.telephone != null}"><a href="/list.action?pageNum=1">数据管理</a></h2>
 
-</div>
-<li><a href="/logout">退出登录</a></li>
-<li><a href="/list.action?pageNum=1">数据管理</a></li>
-</div>
 </body>
 </html>

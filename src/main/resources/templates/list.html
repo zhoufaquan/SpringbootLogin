@@ -37,16 +37,70 @@
                 修改
             </button></td>
 
-
         </tr>
     </table>
-    <p>当前 <span th:text="${pageInfo.pageNum}"></span> 页,总 <span th:text="${pageInfo.pages}"></span> 页,共 <span th:text="${pageInfo.total}"></span> 条记录</p>
+<br>
+    <p>当前 <span th:text="${pageInfo.pageNum}"></span> 页,总 <span th:text="(${pageInfo.pages})"></span> 页,共 <span th:text="${pageInfo.total}"></span> 条记录</p>
     <a th:href="@{/list.action}">首页</a>
     <a th:href="@{/list.action(pageNum=${pageInfo.hasPreviousPage}?${pageInfo.prePage}:1)}">上一页</a>
     <a th:href="@{/list.action(pageNum=${pageInfo.hasNextPage}?${pageInfo.nextPage}:${pageInfo.pages})}">下一页</a>
     <a th:href="@{/list.action(pageNum=${pageInfo.pages})}">尾页</a>
-</div>
+<!--    分页预览数设置-->
+<!--1.使用bootsrap nav and ul-->
+    <nav aria-label="Page navigation">
+        <ul class="pagination" >
+            <!-- 首页 -->
+            <li> <a th:href="@{/list.action}">首页</a></li>
 
+            <li th:if="${pageInfo.pageNum == 1}"><span>上一页</span></li>
+            <li th:if="${pageInfo.pageNum > 1}"><a th:href="@{/list.action(pageNum=${pageInfo.pageNum} -1)}">上一页</a></li>
+
+            <!-- 当前页面小于等于4,展示<1，2，3，4...> -->
+            <th:block data-th-if="${(pageInfo.pageNum) le 4}" data-th-each="i : ${#numbers.sequence(1,4)}">
+              <li th:if="${pageInfo.pageNum == i}"  class="active"><span th:text="${i}">页码</span></li>
+              <li th:if="${pageInfo.pageNum != i}"><a th:href="@{/list.action(pageNum=${i})}" th:text="${i}">页码</a></li>
+            </th:block>
+
+            <li data-th-if="${(pageInfo.pageNum) le 4}">
+                <a th:href="@{/list.action(pageNum=${pageInfo.pageNum} + 3)}" >
+                    <span >...</span>
+                </a>
+            </li>
+
+            <!-- 最后一页与当前页面之差，小于等于3 展示<...14,15,16,17>-->
+            <li data-th-if="${((pageInfo.pages)-(pageInfo.pageNum)) le 3}">
+                <a th:href="@{/list.action(pageNum=${pageInfo.pageNum}-3)}" >
+                    <span >...</span>
+                </a>
+            </li>
+            <th:block data-th-if="${((pageInfo.pages)-(pageInfo.pageNum)) le 3}" data-th-each="i : ${#numbers.sequence((pageInfo.pages)-3, (pageInfo.pages))}">
+                <li th:if="${pageInfo.pageNum == i}"  class="active"><span th:text="${i}">页码</span></li>
+                <li th:if="${pageInfo.pageNum != i}"><a th:href="@{/list.action(pageNum=${i})}" th:text="${i}">页码</a></li>
+            </th:block>
+
+            <!-- 当前页面大于4，最后一页与当前页面之差大于3 展示<...7，8，9....>-->
+            <li data-th-if="${((pageInfo.pageNum) gt 4) && (((pageInfo.pages)-(pageInfo.pageNum)) gt 3 )}">
+                <a th:href="@{/list.action(pageNum=${pageInfo.pageNum} - 3)}" >
+                    <span >...</span>
+                </a>
+            </li>
+            <th:block  data-th-if="${((pageInfo.pageNum ) gt 4) && (((pageInfo.pages)-(pageInfo.pageNum )) gt 3 )}" data-th-each="i : ${#numbers.sequence(pageInfo.pageNum, (pageInfo.pageNum)+2)}">
+                <li th:if="${pageInfo.pageNum == i}"  class="active"><span th:text="${i}">页码</span></li>
+                <li th:if="${pageInfo.pageNum != i}"><a th:href="@{/list.action(pageNum=${i})}" th:text="${i}">页码</a></li>
+            </th:block>
+
+            <li   data-th-if="${((pageInfo.pageNum) gt 4) && (((pageInfo.pages)-(pageInfo.pageNum)) gt 3 )}">
+                <a th:href="@{/list.action(pageNum=${pageInfo.pageNum} + 3)}" >
+                    <span >...</span>
+                </a>
+            </li>
+
+            <li th:if="${pageInfo.pageNum == pageInfo.pages}"><span>下一页</span></li>
+            <li th:if="${pageInfo.pageNum < pageInfo.pages}">  <a th:href="@{/list.action(pageNum=${pageInfo.hasNextPage}?${pageInfo.nextPage}:${pageInfo.pages})}">下一页</a></li>
+            <li>  <a th:href="@{/list.action(pageNum=${pageInfo.pages})}">尾页</a></li>
+        </ul>
+    </nav>
+</div>
 
 
 
@@ -66,7 +120,6 @@
                 <form  id="mobileform"  onclick="return checkForm()" method="get">
                     <div class="form-group fgdiv">
                         <label for="telephone">telephone</label>
-
                         <input type="text" class="form-control dlinput" id="telephone" name="telephone" placeholder="请输入11位的手机号"   required minlength="11" >
                         <div class="warn1"></div>
                     </div>
@@ -75,7 +128,7 @@
                         <input type="text" class="form-control dlinput" id="password" name="password" placeholder="请输入6位数字密码"  required minlength="6">
                         <div class="warn2"></div>
                     </div>
-                    <button type="submit" class="btn btn-success dlbtn" onclick="return createUser()">提交</button>
+                    <button type="button" class="btn btn-success dlbtn" onclick="return createUser()">提交</button>
                 </form>
             </div>
 
@@ -116,8 +169,8 @@
                         <input type="text" class="form-control dlinput" id="password1" name="password" placeholder="请输入6位数字密码"  required minlength="6">
                         <div class="warn2"></div>
                     </div>
-
-                    <button type="submit" class="btn btn-success dlbtn" onclick="return updateCustomer()">保存修改</button>
+<!--                    //type=button 不允许提交表单-->
+                    <button type="button" class="btn btn-success dlbtn" onclick="return updateCustomer()">保存修改</button>
                 </form>
             </div>
 
@@ -133,30 +186,24 @@
 
 </body>
 <script type="text/javascript">
-    //  今天发现$.post的回调函数无法赋值 debug发现在，回调函数还未执行时赋值操作已完成考虑到可能是异步操作。
-    // 在网上查找资料发现：Jquery封装好的$.post $.get发得请求都为“异步”请求，
-    // 所以发出请求后还没等一般处理程序处理返回结果，就执行了为变量赋值，因此取到的值总为undefined。
-    //解决同步问题
- $.ajaxSetup({
-     async:false
- });
+
     function clearUser() {
         $("#telephone").val("");
         $("#password").val("");
     }
-    function checkForm(){
+    function checkForm() {
 
         var telephone = $("#telephone").val();
-        var  password = $("#password").val();
+        var password = $("#password").val();
 
         $("#telephone").ready(function () {
-            if(telephone == ""){
+            if (telephone == "") {
                 $(".warn1").html("")
                 return false;
             }
         })
         $("#password").ready(function () {
-            if(password == ""){
+            if (password == "") {
                 $(".warn2").html("")
                 return false;
             }
@@ -170,155 +217,161 @@
             $(".warn2").html("")
             return false;
         })
-        $("#telephone").blur(function (){
+        $("#telephone").blur(function () {
 
-            if(telephone == ""){
+            if (telephone == "") {
                 $(".warn1").html("")
                 return false;
             }
         })
         $("#password").blur(function () {
 
-            if(password == ""){
+            if (password == "") {
                 $(".warn2").html("")
                 return false;
             }
         })
 
-        if(!(/^(((13[0-9]{1})|(15[0-9]{1})|(16[0-9]{1})|(17[3-8]{1})|(18[0-9]{1})|(19[0-9]{1})|(14[5-7]{1}))+\d{8})$/.test(telephone))){
-            $(".warn1").html("手机号码格式不正确")
-            console.log(telephone)
-            return false;
-
-        }
-        else if(!(/^[0-9]{6}$/.test(password))){
-            $(".warn2").html("密码格式格式不正确")
-            console.log(password)
-            return false;
-
-        } else {
-            return true;
-            console.log("successful")
-        }
-    }
-    $(function () {
-        $("#telephone").focus(function () {
-            $(".msg").hide();
+        $(function () {
+            $("#telephone").focus(function () {
+                $(".msg").hide();
+            })
         })
-    })
-
-    function createUser() {
-        //解决同步问题
-        async:false,
-            $.post("/add.action",$("#mobileform").serialize(),function (data) {
-                alert(data)
-                if (data === "OK"){
-                    alert("客户添加成功");
-                    window.location.reload();
-                } else {
-                    alert("客户添加失败");
-                    window.location.reload();
-                }
-            });
-
     }
 
-    function checkForm2(){
+        function createUser() {
 
-        var telephone = $("#telephone1").val();
-        var  password = $("#password1").val();
+            var telephone = $("#telephone").val();
+            var password = $("#password").val();
 
-        $("#telephone1").ready(function () {
-            if(telephone == ""){
-                $(".warn1").html("")
+            if (!(/^(((13[0-9]{1})|(15[0-9]{1})|(16[0-9]{1})|(17[3-8]{1})|(18[0-9]{1})|(19[0-9]{1})|(14[5-7]{1}))+\d{8})$/.test(telephone))) {
+                $(".warn1").html("手机号码格式不正确")
+
                 return false;
-            }
-        })
-        $("#password1").ready(function () {
-            if(password == ""){
-                $(".warn2").html("")
+            } else if (!(/^[0-9]{6}$/.test(password))) {
+                $(".warn2").html("密码格式格式不正确")
                 return false;
-            }
-        })
-        //聚焦
-        $("#telephone1").focus(function () {
-            $(".warn2").html("")
-
-            return false;
-        })
-        $("#password1").focus(function () {
-            $(".warn2").html("")
-            return false;
-        })
-        //失去焦点
-        $("#telephone1").blur(function (){
-
-            if(telephone == ""){
-                $(".warn1").html("")
-                return false;
-            }
-        })
-        $("#password1").blur(function () {
-
-            if(password == ""){
-                $(".warn2").html("")
-                return false;
-            }
-        })
-
-        if(!(/^(((13[0-9]{1})|(15[0-9]{1})|(16[0-9]{1})|(17[3-8]{1})|(18[0-9]{1})|(19[0-9]{1})|(14[5-7]{1}))+\d{8})$/.test(telephone))){
-            $(".warn1").html("手机号码格式不正确")
-            return false;
-        }
-        else if(!(/^[0-9]{6}$/.test(password))){
-            $(".warn2").html("密码格式格式不正确")
-            return false;
-        } else {
-            return true;
-        }
-
-    }
-    $(function () {
-        $("#telephone").focus(function () {
-            $(".msg").hide();
-        })
-    })
-
-    function editUser(ID) {
-        console.log(ID)
-        const modal = $("#myModal3");
-        modal.find('#user_id').val(ID);
-    }
-
-
-    // 执行修改客户操作
-    function updateCustomer() {
-
-        $.post("/update.action",$("#mobileform1").serialize(),function(data){
-            console.log(data)
-            if(data =="OK"){
-                alert("客户信息更新成功！");
-                window.location.reload();
-            }else{
-                alert("客户信息更新失败！");
-                window.location.reload();
-            }
-        });
-    }
-    // 删除客户
-    function deleteUser(id) {
-        if(confirm('确实要删除该客户吗?')) {
-            $.post("/delete.action",{"id":id},
-                function(data){
-                    if(data =="OK"){
-                        alert("客户删除成功！");
+            } else {
+                //解决同步问题
+                $.ajaxSetup({
+                    async:false
+                })
+                $.post("/add.action", $("#mobileform").serialize(), function (data) {
+                    alert(data)
+                    if (data === "OK") {
+                        alert("客户添加成功");
                         window.location.reload();
-                    }else{
-                        alert("删除客户失败！");
+                    } else {
+                        alert("客户添加失败");
                         window.location.reload();
                     }
-                });
+                })
+            }
+
         }
-    }
+
+        function checkForm2() {
+
+            var telephone = $("#telephone1").val();
+            var password = $("#password1").val();
+
+            $("#telephone1").ready(function () {
+                if (telephone == "") {
+                    $(".warn1").html("")
+                    return false;
+                }
+            })
+            $("#password1").ready(function () {
+                if (password == "") {
+                    $(".warn2").html("")
+                    return false;
+                }
+            })
+            //聚焦
+            $("#telephone1").focus(function () {
+                $(".warn2").html("")
+
+                return false;
+            })
+            $("#password1").focus(function () {
+                $(".warn2").html("")
+                return false;
+            })
+            //失去焦点
+            $("#telephone1").blur(function () {
+
+                if (telephone == "") {
+                    $(".warn1").html("")
+                    return false;
+                }
+            })
+            $("#password1").blur(function () {
+
+                if (password == "") {
+                    $(".warn2").html("")
+                    return false;
+                }
+            })
+
+
+            $(function () {
+                $("#telephone").focus(function () {
+                    $(".msg").hide();
+                })
+            })
+        }
+
+            function editUser(ID) {
+                console.log(ID)
+                const modal = $("#myModal3");
+                modal.find('#user_id').val(ID);
+            }
+
+            // 执行修改客户操作
+            function updateCustomer() {
+                var telephone = $("#telephone1").val();
+                var password = $("#password1").val();
+                if (!(/^(((13[0-9]{1})|(15[0-9]{1})|(16[0-9]{1})|(17[3-8]{1})|(18[0-9]{1})|(19[0-9]{1})|(14[5-7]{1}))+\d{8})$/.test(telephone))) {
+                    $(".warn1").html("手机号码格式不正确")
+                    return false;
+                } else if (!(/^[0-9]{6}$/.test(password))) {
+                    $(".warn2").html("密码格式格式不正确")
+                    return false;
+                } else {
+                    //将异步改为同步
+                    $.ajaxSetup({
+                        async:false
+                    })
+                    $.post("/update.action", $("#mobileform1").serialize(), function (data) {
+                        if (data == "OK") {
+                            alert("客户信息更新成功！");
+                         window.location.reload()
+                        } else {
+                            alert("客户信息更新失败！");
+                          window.location.reload()
+                        }
+                    })
+
+                }
+
+
+            }
+
+            // 删除客户
+            function deleteUser(id) {
+                if (confirm('确实要删除该客户吗?')) {
+                    $.post("/delete.action", {"id": id},
+                        function (data) {
+                            if (data == "OK") {
+                                alert("客户删除成功！");
+                                window.location.reload();
+                            } else {
+                                alert("删除客户失败！");
+                                window.location.reload();
+                            }
+                        });
+                }
+            }
+
 </script>
 </html>

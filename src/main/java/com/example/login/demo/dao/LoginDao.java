@@ -14,7 +14,7 @@ import java.util.List;
 public interface LoginDao {
     int findByIdToken(@Param("token") String token);
 
-    void insertUser( @Param("telephone")String telephone,@Param("password") String password,@Param("token") String token);
+    int insertUser( @Param("telephone")String telephone,@Param("password") String password,@Param("token") String token);
 
     User findUser(@Param("telephone") String telephone);
 

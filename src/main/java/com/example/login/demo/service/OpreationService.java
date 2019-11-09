@@ -14,8 +14,9 @@ public class OpreationService {
  @Autowired
  private OperationDao operationDao;
     public int addUser(User user) {
-        int user1 = operationDao.addUser(user.getTelephone(),user.getPassword(),user.getToken());
-        return user1;
+        int flag = operationDao.addUser(user.getTelephone(),user.getPassword(),user.getToken());
+        System.out.println("添加返回：" + flag);
+        return flag;
     }
 
     public User getUserById(int id) {
@@ -26,11 +27,13 @@ public class OpreationService {
     public int updateUser(User user) {
 
         int flag = operationDao.updateUser(user.getId(),user.getTelephone(),user.getPassword());
+        System.out.println("更新返回：" + flag);
         return flag;
     }
 
     public int deleteUserById(int id) {
         int flag = operationDao.deleteUserById(id);
+        System.out.println("删除返回：" + flag);
         return flag;
     }
 }
