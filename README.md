@@ -15,6 +15,7 @@ https://blog.csdn.net/qq_31424825/article/details/79052192
 
 #html5分页代码
 
+````
 <!--    分页预览数设置-->
 <!--1.使用bootsrap nav and ul-->
     <nav aria-label="Page navigation">
@@ -69,13 +70,13 @@ https://blog.csdn.net/qq_31424825/article/details/79052192
             <li th:if="${pageInfo.pageNum < pageInfo.pages}">  <a th:href="@{/list.action(pageNum=${pageInfo.hasNextPage}?${pageInfo.nextPage}:${pageInfo.pages})}">下一页</a></li>
             <li>  <a th:href="@{/list.action(pageNum=${pageInfo.pages})}">尾页</a></li>
         </ul>
-    </nav>```
-
+    </nav>
+````
 #ajax异步刷新
 
 https://blog.csdn.net/weixin_42595884/article/details/93662944
 
-
+````
 ajax默认为异步刷新
                $.ajaxSetup({
                                    async:false
@@ -97,3 +98,4 @@ ajax默认为异步刷新
 ````
 button属性 type = button
 
+````
