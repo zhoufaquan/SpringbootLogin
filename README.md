@@ -20,6 +20,18 @@ select返回一个结果集
         return "/login";
 
 ````
+
+3.关于退出系统时，清除session
+
+  清除session对象内容的主要方法如下:
+
+        (1)、removeAttribute()方法。该方法是用来删除session对象中保存的指定属性信息。
+
+        例如：session.setAttribute("name", "iverson");session.removeAttribute("name");
+
+        (2)、invalidate()方法。该方法可以清除session对象中的所有信息。
+
+        例如：session.invalidate().
 #cookies
 
 ````
