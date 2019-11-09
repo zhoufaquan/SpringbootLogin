@@ -13,7 +13,7 @@ https://blog.csdn.net/qq_27317475/article/details/81168241
 
 https://blog.csdn.net/qq_31424825/article/details/79052192
 
-#html5 分页代码
+#html5分页代码
 `<!--    分页预览数设置-->
 <!--1.使用bootsrap nav and ul-->
     <nav aria-label="Page navigation">
@@ -92,6 +92,6 @@ ajax默认为异步刷新
      
 ````
 #不提交表单
-
+````
 button属性 type = button
 
