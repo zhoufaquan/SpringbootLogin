@@ -6,6 +6,60 @@ delete /update/insert 成功返回一个整数1，失败0
 select返回一个结果集
 
 ````
+#session
+````
+1.在控制层直接使用，传给前端页面
+
+               HttpSession session = request.getSession();
+               session.setAttribute("telephone",telephone);
+               return "/index";
+
+2.清除session
+
+        session.invalidate();
+        return "/login";
+
+````
+#cookies
+
+````
+借助cookies工具类 
+
+public class CookieUtil {
+    //设置Cookie
+    public static void setCookie(HttpServletRequest request, HttpServletResponse response, String key, String value, int expiry){
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(expiry);
+        response.addCookie(cookie);
+    }
+
+    //获取所有Cookie
+    public static Map<String, String> getCookies(HttpServletRequest request){
+        Map<String, String> map = new HashMap<>();
+        Cookie cookies[] = request.getCookies();
+        if (cookies != null){
+            for(int i = 0; i < cookies.length; i++){
+                if(!"token".equals(cookies[i].getName()))
+                    map.put(cookies[i].getName(), cookies[i].getValue());
+            }
+        }
+        return map;
+    }
+
+    //清空所有的Cookie
+    public void clear(HttpServletRequest request, HttpServletResponse response){
+        Map<String, String> map = getCookies(request);
+        Iterator<Map.Entry<String, String>> iter = map.entrySet().iterator();
+        while(iter.hasNext()){
+            Map.Entry<String, String> me = iter.next();
+            Cookie cookie = new Cookie(me.getKey(), "");
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
+        }
+    }
+}
+
+````
 #Maybatis 分页插件使用步骤
 
 https://blog.csdn.net/qq_27317475/article/details/81168241
