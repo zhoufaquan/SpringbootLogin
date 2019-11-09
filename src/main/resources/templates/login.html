@@ -32,16 +32,94 @@
         <div class="warn2"></div>
     </div>
     <div class="msg" th:text="${msg}"></div>
+    <div class="form-group fgdiv">
+        <label for="code123">图形验证码</label>
+        <input type="text" class="form-control dlinput" id="code123"  placeholder="请输入图形验证码"  required minlength="4">
+        <div class="warn3"></div>
+        <span><canvas id="canvas" width="120" height="45"></canvas>
+
+             <a href="#" id="changeImg">看不清，换一张</a></span>
+
+    </div>
     <button type="submit" class="btn btn-success dlbtn" >submit</button>
 </form>
 
 </body>
 
 <script type="text/javascript">
+    var str1 = [];
+    /**生成一个随机数**/
+    function randomNum(min,max){
+        return Math.floor( Math.random()*(max-min)+min);
+    }
+    /**生成一个随机色**/
+    function randomColor(min,max){
+        var r = randomNum(min,max);
+        var g = randomNum(min,max);
+        var b = randomNum(min,max);
+        return "rgb("+r+","+g+","+b+")";
+    }
+    drawPic();
+    document.getElementById("changeImg").onclick = function(e){
+        e.preventDefault();
+        drawPic();
+    }
+
+    /**绘制验证码图片**/
+    function drawPic(){
+        //每次点击str1置空
+        str1 = [];
+        var canvas=document.getElementById("canvas");
+        var width=canvas.width;
+        var height=canvas.height;
+        var ctx = canvas.getContext('2d');
+        ctx.textBaseline = 'bottom';
+
+        /**绘制背景色**/
+        ctx.fillStyle = randomColor(180,240); //颜色若太深可能导致看不清
+        ctx.fillRect(0,0,width,height);
+        /**绘制文字**/
+        var str = '123456789';
+        for(var i=0; i<4; i++){
+             var  txt = str[randomNum(0,str.length)];
+             str1 = str1 +txt;
+            ctx.fillStyle = randomColor(50,160);  //随机生成字体颜色
+            ctx.font = randomNum(15,40)+'px SimHei'; //随机生成字体大小
+             x = 10+i*25;
+             y = randomNum(25,45);
+            var deg = randomNum(-45, 45);
+            //修改坐标原点和旋转角度
+            ctx.translate(x,y);
+            ctx.rotate(deg*Math.PI/180);
+            ctx.fillText(txt, 0,0);
+            //恢复坐标原点和旋转角度
+            ctx.rotate(-deg*Math.PI/180);
+            ctx.translate(-x,-y);
+        }
+        /**绘制干扰线**/
+        for(var i=0; i<8; i++){
+            ctx.strokeStyle = randomColor(40,180);
+            ctx.beginPath();
+            ctx.moveTo( randomNum(0,width), randomNum(0,height) );
+            ctx.lineTo( randomNum(0,width), randomNum(0,height) );
+            ctx.stroke();
+        }
+        /**绘制干扰点**/
+        for(var i=0; i<100; i++){
+            ctx.fillStyle = randomColor(0,255);
+            ctx.beginPath();
+            ctx.arc(randomNum(0,width),randomNum(0,height), 1, 0, 2*Math.PI);
+            ctx.fill();
+        }
+    }
+
+
     function checkForm(){
 
         var telephone = $("#telephone").val();
-        var  password = $("#password").val();
+        var password = $("#password").val();
+        var code = $("#code123").val();
+
 
         $("#telephone").ready(function () {
             if(telephone == ""){
@@ -55,6 +133,12 @@
                 return false;
             }
         })
+        $("#code123").ready(function () {
+            if(code == ""){
+                $(".warn3").html("")
+                return false;
+            }
+        })
         $("#telephone").focus(function () {
             $(".warn2").html("")
 
@@ -62,6 +146,10 @@
         })
         $("#password").focus(function () {
             $(".warn2").html("")
+            return false;
+        })
+        $("#code123").focus(function () {
+            $(".warn3").html("")
             return false;
         })
         $("#telephone").blur(function (){
@@ -78,6 +166,13 @@
                 return false;
             }
         })
+        $("#code123").blur(function () {
+
+            if(password == ""){
+                $(".warn3").html("")
+                return false;
+            }
+        })
 
      if(!(/^(((13[0-9]{1})|(15[0-9]{1})|(16[0-9]{1})|(17[3-8]{1})|(18[0-9]{1})|(19[0-9]{1})|(14[5-7]{1}))+\d{8})$/.test(telephone))){
             $(".warn1").html("手机号码格式不正确")
@@ -85,6 +180,11 @@
         }
      else if(!(/^[0-9]{6}$/.test(password))){
          $(".warn2").html("密码格式格式不正确")
+         return false;
+     }
+     else if(code != str1){
+         console.log(str1)
+             $(".warn3").html("验证码输入有误")
          return false;
      } else {
         return true;
