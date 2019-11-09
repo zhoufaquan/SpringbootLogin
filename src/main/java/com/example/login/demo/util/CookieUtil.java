@@ -13,6 +13,7 @@ import java.util.Map;
  */
 public class CookieUtil {
     //设置Cookie
+    //参数根据需求添加
     public static void setCookie(HttpServletRequest request, HttpServletResponse response, String key, String value, int expiry){
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(expiry);
@@ -38,9 +39,9 @@ public class CookieUtil {
         Iterator<Map.Entry<String, String>> iter = map.entrySet().iterator();
         while(iter.hasNext()){
             Map.Entry<String, String> me = iter.next();
-            Cookie cookie = new Cookie(me.getKey(), "");
-            cookie.setMaxAge(0);
-            response.addCookie(cookie);
+            Cookie cookie = new Cookie(me.getKey(), "");//假如要删除名称为me.getKey()的Cookie
+            cookie.setMaxAge(0); //立即删除型
+            response.addCookie(cookie); //重新写入，将覆盖之前的
         }
     }
 }

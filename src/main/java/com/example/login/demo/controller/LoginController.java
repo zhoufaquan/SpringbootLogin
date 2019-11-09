@@ -78,8 +78,11 @@ public class LoginController {
         return "/login";
     }
     @GetMapping("/logout")
-    public String logout(HttpSession session){
+    //退出登录清除cookies 和 session
+    public String logout(HttpSession session,HttpServletRequest request,HttpServletResponse response){
         session.invalidate();
+        CookieUtil cookieUtil = new CookieUtil();
+        cookieUtil.clear(request,response);
         return "/login";
     }
     @GetMapping("/list.action")

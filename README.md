@@ -6,6 +6,10 @@ delete /update/insert 成功返回一个整数1，失败0
 select返回一个结果集
 
 ````
+#cookie和session的关系
+
+https://www.cnblogs.com/moyand/p/9047978.html
+
 #session
 ````
 1.在控制层直接使用，传给前端页面
@@ -14,8 +18,8 @@ select返回一个结果集
                session.setAttribute("telephone",telephone);
                return "/index";
 
-2.清除session
-
+2.清除session(session存放在运行项目的服务器上，登陆时插入数据库的信息也叫写入session，是登陆持久化)
+        
         session.invalidate();
         return "/login";
 
