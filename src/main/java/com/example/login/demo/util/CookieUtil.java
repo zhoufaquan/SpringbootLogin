@@ -26,8 +26,9 @@ public class CookieUtil {
         Cookie cookies[] = request.getCookies();
         if (cookies != null){
             for(int i = 0; i < cookies.length; i++){
-                if(!"token".equals(cookies[i].getName()))
+                if(!"token".equals(cookies[i].getName())) {
                     map.put(cookies[i].getName(), cookies[i].getValue());
+                }
             }
         }
         return map;
