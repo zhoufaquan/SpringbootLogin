@@ -19,18 +19,20 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Author: zhouFaQuan
- * Date: 2019/10/28 21:36
+ * @Author: zhouFaQuan
+ * @Date: 2019/10/28 21:36
+ * @Controller用于标注控制层组件
  */
 @Controller
-//@Controller用于标注控制层组件
+
 public class LoginController {
     @Autowired
     private LoginService loginService;
     private HttpServletResponse response;
 
+
     @GetMapping("/login")
-    public String login(@Param("telephone") String telephone, @Param("password") String password, Model model,
+    public String login(@Param("telephone") String telephone, @Param("password") String password, @Param("verifyCode") String verifyCode,Model model,
                         HttpServletRequest request, HttpServletResponse response) {
 
          User user1 = loginService.findUser(telephone);
@@ -38,23 +40,47 @@ public class LoginController {
            if (!user1.getPassword().equals(password)) {
                model.addAttribute("msg","密码错误");
                return "login";
-           }else {
-               HttpSession session = request.getSession();
-               session.setAttribute("telephone",telephone);
-               return "/index";
+           } else {
+                   String code = (String) request.getSession().getAttribute("verifyCode");
+                   System.out.println("code:"+code);
+                   // 获取页面提交的验证码
+                   String inputCode = verifyCode;
+                   System.out.println("inputCode:"+inputCode);
+                   if (code.toLowerCase().equals(inputCode.toLowerCase())) {
+                       HttpSession session = request.getSession();
+                       session.setAttribute("telephone", telephone);
+                       return "/index";
+
+                   }else {
+                       model.addAttribute("msg", "验证码错误");
+                       return "/login";
+                   }
            }
         } else if (telephone != null && password!=null) {
-            User user = new User();
-            String token = UUID.randomUUID().toString();
-            user.setTelephone(telephone);
-            user.setPassword(password);
-            user.setToken(token);
-            loginService.insertUser(user);
-            int expire = 60 * 60 * 24 * 7;  //表示7天
-            CookieUtil.setCookie(request, response, "Token", token, expire);
-            HttpSession session = request.getSession();
-            session.setAttribute("telephone",telephone);
-            return "index";
+            // getAttribute的返回值类型是Object,需要向下转型，转成你的verifyCode类型的，简单说就是存什么，取出来还是什么。
+            String code = (String) request.getSession().getAttribute("verifyCode");
+            System.out.println("code:"+code);
+            // 获取页面提交的验证码
+            String inputCode = verifyCode;
+            System.out.println("inputCode:"+inputCode);
+            if (code.toLowerCase().equals(inputCode.toLowerCase())) {
+                User user = new User();
+                String token = UUID.randomUUID().toString();
+                user.setTelephone(telephone);
+                user.setPassword(password);
+                user.setToken(token);
+                loginService.insertUser(user);
+                //表示7天
+                int expire = 60 * 60 * 24 * 7;
+                CookieUtil.setCookie(request, response, "Token", token, expire);
+                HttpSession session = request.getSession();
+                session.setAttribute("telephone",telephone);
+                return "index";
+            }else {
+                model.addAttribute("msg", "验证码错误");
+                return "/login";
+            }
+
 
         }
         else {
